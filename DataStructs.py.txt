@@ -1,0 +1,115 @@
+class Stack(object):
+    
+    def __init__(self, max):
+        self.__stackList = [None] * max
+        self.__top = -1
+        
+    def push(self, item):
+        self.__top += 1
+        self.__stackList[self.__top] = item
+        
+    def pop(self):
+        top = self.__stackList[self.__top]
+        self.__stackList[self.__top] = None
+        self.__top -= 1
+        return top
+    
+    def peek(self):
+        if not self.__isEmpty():
+            return self.__stackList[self.__top]
+    
+    def isEmpty(self):
+        return self.__top < 0
+    
+    def isFull(self):
+        return self.__top >= len(self.__stackList) - 1
+    
+    def __len__(self):
+        return self.__top + 1
+    
+    def __str__(self):
+        stack = "["
+        for i in range(self.__top + 1):
+            if len(stack) > 1:
+                stack += ", "
+            stack += str(self.__stackList[i])
+        stack += "]"
+        return stack
+    
+class Queue(object):
+    
+    def __init__(self, size):
+        self.__queue = [None] * size
+        self.__maxSize = size
+        self.__front   = 1
+        self.__rear    = 0
+        self.__nItems  = 0
+    
+    def insert(self, item):
+        if self.isFull():
+            raise Exception("Queue is full.")
+        self.__rear += 1
+        if self.__rear == self.__maxSize:
+            self.__rear = 0
+        self.__queue[self.__rear] = item
+        self.__nItems += 1
+        return True
+    
+    def remove(self):
+        if self.isEmpty():
+            raise Exception("Queue is empty.")
+        front = self.__queue[self.__front] 
+        self.__queue[self.__front]
+        self.__front += 1
+        if self.__front == self.__maxSize:
+            self.__front = 0
+        self.__nItems -= 1
+        return front
+    
+    def peek(self):
+        if self.isEmpty():
+            return None
+        else:
+            return self.__queue[self.__front]
+    
+    def isEmpty(self):
+        return self.__nItems <= 0
+    
+    def isFull(self):
+        return self.__nItems == self.__maxSize
+    
+    def __len__(self):
+        return self.__nItems
+    
+    def __str__(self):
+        queue = "["
+        for i in range(self.__nItems):
+            if len(queue) > 1:
+                queue += ", "
+            j = i + self.__front
+            if j >= self.__maxSize:
+                j -= self.__maxSize
+            queue += str(self.__queue[j])
+        queue += "]"
+        return queue
+    
+def FunnyString(string):
+    stack = Stack(len(string))
+    queue = Queue(len(string))
+    funnyString = ''
+    
+    wordList = string.split()
+    
+    for word in wordList:
+        for letter in word: 
+            stack.push(letter)
+            
+        for letter in word:
+            funnyString += stack.pop()
+        funnyString += " "
+            
+    while not queue.isEmpty():
+        funnyString += queue.remove()
+        funnyString += " "
+        
+    return funnyString
